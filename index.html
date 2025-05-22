@@ -139,6 +139,7 @@
                     id="name" 
                     name="name" 
                 />
+                <span class="error-message" id="name-error"></span>
 
                 <label for="email">Email</label>
                 <input 
@@ -146,6 +147,7 @@
                     id="email" 
                     name="email" 
                 />
+                <span class="error-message" id="email-error"></span>
 
                 <label for="message">Message</label>
                 <textarea 
@@ -153,6 +155,7 @@
                     name="message" 
                     rows="5" 
                 ></textarea>
+                <span class="error-message" id="message-error"></span>
 
                 <button type="submit">Send Message</button>
                 </form>
@@ -180,11 +183,9 @@
         <div id="messagePopup" class="message-popup hidden">
             <div class="message-popup-content">
                 <button class="message-close-btn">&times;</button>
-                <p>Привет, не забудь потыкать на фотки проектов и оставить обратнкую связь</p>
+                <p>Привет, не забудь потыкать на фотки проектов и оставить обратную связь</p>
             </div>
         </div>
-
-
         
         <script src="script.js"></script>
     </body>
