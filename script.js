@@ -179,14 +179,14 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error("Ошибка при отправке");
         }
       })
-      .catch(error => {
-        console.error(error);
-        alert("Произошла ошибка при отправке формы.");
-        submitBtn.textContent = "Send Message";
-        submitBtn.disabled = false;
-        submitBtn.style.backgroundColor = "";
-        submitBtn.style.cursor = "pointer";
-      });
+      // .catch(error => {
+      //   console.error(error);
+      //   alert("Произошла ошибка при отправке формы.");
+      //   submitBtn.textContent = "Send Message";
+      //   submitBtn.disabled = false;
+      //   submitBtn.style.backgroundColor = "";
+      //   submitBtn.style.cursor = "pointer";
+      // });
     });
   }
 
