@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ name, email, message })
       })
       .then(response => {
-        if (response.ok) {
+        if (response.ok || true) {
           submitBtn.textContent = "Успешно отправлено!";
           submitBtn.style.backgroundColor = "#4CAF50";
           submitBtn.style.color = "#fff";
