@@ -660,3 +660,14 @@ body {
   font-weight: 500;
   color: #21243D;
 }
+
+.error-message {
+  color: red;
+  font-size: 0.85em;
+  margin-top: 4px;
+  display: block;
+}
+
+.invalid {
+  border-color: red;
+}
