@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ name, email, message })
       })
       .then(response => {
-        if (response.ok || true) {
+        if (response.ok) {
           submitBtn.textContent = "Успешно отправлено!";
           submitBtn.style.backgroundColor = "#4CAF50";
           submitBtn.style.color = "#fff";
@@ -179,14 +179,14 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error("Ошибка при отправке");
         }
       })
-      // .catch(error => {
-      //   console.error(error);
-      //   alert("Произошла ошибка при отправке формы.");
-      //   submitBtn.textContent = "Send Message";
-      //   submitBtn.disabled = false;
-      //   submitBtn.style.backgroundColor = "";
-      //   submitBtn.style.cursor = "pointer";
-      // });
+      .catch(error => {
+        console.error(error);
+        alert("Произошла ошибка при отправке формы.");
+        submitBtn.textContent = "Send Message";
+        submitBtn.disabled = false;
+        submitBtn.style.backgroundColor = "";
+        submitBtn.style.cursor = "pointer";
+      });
     });
   }
 
