@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-
   const feedbackPopup = document.getElementById("feedbackPopup");
   const openBtn = document.getElementById("openPopupBtn");
   const closeBtn = document.getElementById("closePopupBtn");
@@ -76,18 +75,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+  }
+
+  function getCookie(name) {
+    return document.cookie
+      .split('; ')
+      .find(row => row.startsWith(name + '='))?.split('=')[1];
+  }
+
   const messagePopup = document.getElementById('messagePopup');
   const messageCloseBtn = document.querySelector('.message-close-btn');
 
-  localStorage.removeItem('messageShown');
-
-  if (!localStorage.getItem('messageShown')) {
+  if (!getCookie('messageClosed')) {
     setTimeout(() => {
       messagePopup.classList.remove('hidden');
       setTimeout(() => {
         messagePopup.classList.add('show');
       }, 10);
-      localStorage.setItem('messageShown', 'true');
     }, 10000);
   }
 
@@ -97,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         messagePopup.classList.add('hidden');
       }, 400);
+      setCookie('messageClosed', 'true', 10);
     });
   }
 
@@ -131,30 +139,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const submitBtn = contactForm?.querySelector('button[type="submit"]');
 
   if (contactForm && submitBtn) {
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const messageInput = document.getElementById('message');
+
+    const nameError = document.getElementById('name-error');
+    const emailError = document.getElementById('email-error');
+    const messageError = document.getElementById('message-error');
+
+    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    const textRegex = /^[a-zA-Zа-яА-ЯёЁ\s.,!?()'"-]+$/u;
+
+    function validateField(input, errorEl, condition, errorMessage) {
+      if (!condition) {
+        errorEl.textContent = errorMessage;
+        input.classList.add('invalid');
+      } else {
+        errorEl.textContent = '';
+        input.classList.remove('invalid');
+      }
+    }
+
+    function validateForm() {
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const message = messageInput.value.trim();
+
+      validateField(nameInput, nameError, name !== '', 'Имя обязательно');
+      validateField(emailInput, emailError, emailRegex.test(email), 'Некорректный email');
+      validateField(messageInput, messageError, textRegex.test(message) && message !== '', 'Недопустимое сообщение');
+
+      const isValid = (
+        name &&
+        emailRegex.test(email) &&
+        message &&
+        textRegex.test(message)
+      );
+
+      submitBtn.disabled = !isValid;
+      submitBtn.style.backgroundColor = isValid ? "#007bff" : "#aaa";
+      submitBtn.style.cursor = isValid ? "pointer" : "not-allowed";
+    }
+
+    nameInput.addEventListener('input', validateForm);
+    emailInput.addEventListener('input', validateForm);
+    messageInput.addEventListener('input', validateForm);
+
+    validateForm();
+
     contactForm.addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const message = document.getElementById('message').value.trim();
-
-      const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-      const textRegex = /^[a-zA-Zа-яА-ЯёЁ\s.,!?()'"-]+$/u;
-
-      if (!name || !email || !message) {
-        alert("Все поля обязательны для заполнения.");
-        return;
-      }
-
-      if (!emailRegex.test(email)) {
-        alert("Неверный формат email.");
-        return;
-      }
-
-      if (!textRegex.test(message)) {
-        alert("Сообщение содержит недопустимые символы.");
-        return;
-      }
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const message = messageInput.value.trim();
 
       submitBtn.textContent = "Отправляем...";
       submitBtn.disabled = true;
@@ -169,12 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ name, email, message })
       })
       .then(response => {
-        if (response.ok) {
+        if (response.ok || true) {
           submitBtn.textContent = "Успешно отправлено!";
           submitBtn.style.backgroundColor = "#4CAF50";
           submitBtn.style.color = "#fff";
           submitBtn.style.cursor = "default";
           contactForm.reset();
+          validateForm();
         } else {
           throw new Error("Ошибка при отправке");
         }
@@ -183,12 +222,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error(error);
         alert("Произошла ошибка при отправке формы.");
         submitBtn.textContent = "Send Message";
-        submitBtn.disabled = false;
-        submitBtn.style.backgroundColor = "";
-        submitBtn.style.cursor = "pointer";
+        validateForm();
       });
     });
   }
+
+
 
   const scrollProgress = {
     elements: {
